@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -65,6 +66,33 @@ class OnlineVideosFragment : Fragment(), CoroutineScope {
                 NetworkHelper(requireContext())
             )
         )[ViewModel::class.java]
+
+        binding.downloadBtn.setOnClickListener {
+            val text = binding.editQuery.text.toString()
+            if (text.trim().isNotEmpty()) {
+                if (MimeTypeMap.getFileExtensionFromUrl(text) == "mp4") {
+                    val maxID = videoDao.getMaxID()
+                    val videoEntity = VideoEntity(
+                        maxID + 1,
+                        0,
+                        maxID.toString(),
+                        text,
+                        "",
+                        "file_path",
+                        0,
+                        0,
+                        Status.UNKNOWN
+                    )
+                    videoDao.insert(videoEntity)
+                    findNavController().navigate(R.id.videoDataFragment)
+                } else {
+                    Toast.makeText(requireContext(), "Error in file type", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Blank is empty!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         loadData()
         onlineVideosAdapter = OnlineVideosAdapter(onItemClickListener)

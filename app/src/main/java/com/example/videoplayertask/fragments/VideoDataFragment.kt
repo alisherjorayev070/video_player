@@ -47,17 +47,20 @@ class VideoDataFragment : Fragment(), CoroutineScope {
     ): View? {
         binding = FragmentVideoDataBinding.inflate(inflater, container, false)
 
+        loadData()
+
+        return binding.root
+    }
+
+    fun loadData() {
         videoList = ArrayList()
         videoDao = AppDatabase.getInstance(requireContext()).videoDao()
         dirPath = Utils.getRootDirPath(requireContext()).toString()
-
         lifecycleScope.launch {
             videoList = videoDao.getVideos() as ArrayList<VideoEntity>
             downloadVideosAdapter = DownloadVideosAdapter(videoList, onClickListener)
             binding.rv.adapter = downloadVideosAdapter
         }
-
-        return binding.root
     }
 
     private val onClickListener = object : OnClickListener {

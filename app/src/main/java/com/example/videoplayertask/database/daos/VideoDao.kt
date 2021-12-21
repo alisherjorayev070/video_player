@@ -14,4 +14,7 @@ interface VideoDao : BaseDao<VideoEntity> {
     @Query("select * from videos where id=:id")
     fun getVideoByID(id: Int): VideoEntity
 
+    @Query("select MAX(id) from videos")
+    fun getMaxID(): Int
+
 }
